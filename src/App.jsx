@@ -35,46 +35,165 @@ Ao enviar, deve-se apresentar um alert javascript com sucesso, limpar todos os c
 do formulário e zerar a barra de progresso novamente.
 */
 
-function App() {
-  return (
-    <div className='App'>
-      <h3>desafio fernandev</h3>
-      <h1>progresso do formulário</h1>
+import { useEffect, useState } from 'react'
 
-      <main>
-        {/* crie a barra de progresso aqui */}
-        <div className='form-group'>
-          <label htmlFor=''>Nome Completo</label>
-          <input />
+function App() {
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [estadoCivil, setEstadoCivil] = useState('')
+    const [genero, setGenero] = useState('')
+    const [progress, setProgress] = useState(0)
+
+    const [pName, setPName] = useState(false)
+    const [pEmail, setPEmail] = useState(false)
+
+    const [disable, setDisable] = useState(true)
+
+    useEffect(() => {
+        if (progress === 100) {
+            setDisable(false)
+        } else {
+            setDisable(true)
+        }
+    }, [progress])
+
+    const verifyName = () => {
+        const reg = /^[a-zA-Z]+ [a-zA-Z]+$/
+
+        if (reg.test(name) && !pName) {
+            setProgress(progress + 25)
+            setPName(true)
+        } else if (!reg.test(name) && pName) {
+            setProgress(progress - 25)
+            setPName(false)
+        }
+    }
+
+    const verifyEmail = () => {
+        const reg =
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+        if (reg.test(email) && !pEmail) {
+            setProgress(progress + 25)
+            setPEmail(true)
+        } else if (!reg.test(email) && pEmail) {
+            setProgress(progress - 25)
+            setPEmail(false)
+        }
+    }
+
+    const verifyEstadoCivil = event => {
+        if (estadoCivil === '') {
+            setProgress(progress + 25)
+        }
+
+        const { value } = event.target
+        setEstadoCivil(value)
+
+        if (value === '') {
+            setProgress(progress - 25)
+            setDisable(true)
+        }
+    }
+
+    const verifyGenero = () => {
+        if (genero === '') {
+            setProgress(progress + 25)
+        }
+        if (progress == 100) {
+            setDisable(false)
+        }
+    }
+
+    const handleSubmit = () => {
+        alert('Foi Caralho!!')
+        setName('')
+        setEmail('')
+        setEstadoCivil('')
+        setGenero('')
+        setProgress(0)
+        document.querySelector('.radio').checked = false
+    }
+
+    return (
+        <div className="App">
+            <h3>desafio fernandev</h3>
+            <h1>progresso do formulário</h1>
+
+            <main>
+                {/* crie a barra de progresso aqui */}
+                <div className="bar-container">
+                    <div
+                        className="bar"
+                        style={{ width: `${progress}%` }}
+                    ></div>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">Nome Completo</label>
+                    <input
+                        value={name}
+                        onChange={e => {
+                            setName(e.target.value)
+                            verifyName()
+                        }}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">E-mail</label>
+                    <input
+                        value={email}
+                        onChange={e => {
+                            setEmail(e.target.value)
+                            verifyEmail()
+                        }}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">Estado Civil</label>
+                    <select onChange={verifyEstadoCivil} value={estadoCivil}>
+                        <option value="">- selecione...</option>
+                        <option value="solteiro">Solteiro</option>
+                        <option value="casado">Casado</option>
+                        <option value="divorciado">Divorciado</option>
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">Gênero</label>
+                    <div className="radios-container">
+                        <span>
+                            <input
+                                className="radio"
+                                type="radio"
+                                name="genero"
+                                value="Masculino"
+                                onChange={e => {
+                                    setGenero(e.target.value)
+                                    verifyGenero()
+                                }}
+                            />
+                            Masculino
+                        </span>
+                        <span>
+                            <input
+                                className="radio"
+                                type="radio"
+                                name="genero"
+                                value="Feminino"
+                                onChange={e => {
+                                    setGenero(e.target.value)
+                                    verifyGenero()
+                                }}
+                            />
+                            Feminino
+                        </span>
+                    </div>
+                </div>
+                <button disabled={disable} onClick={handleSubmit}>
+                    Enviar Formulário
+                </button>
+            </main>
         </div>
-        <div className='form-group'>
-          <label htmlFor=''>E-mail</label>
-          <input />
-        </div>
-        <div className='form-group'>
-          <label htmlFor=''>Estado Civil</label>
-          <select>
-            <option value=''>- selecione...</option>
-            <option value='solteiro'>Solteiro</option>
-            <option value='casado'>Casado</option>
-            <option value='divorciado'>Divorciado</option>
-          </select>
-        </div>
-        <div className='form-group'>
-          <label htmlFor=''>Gênero</label>
-          <div className='radios-container'>
-            <span>
-              <input type='radio' /> Masculino
-            </span>
-            <span>
-              <input type='radio' /> Feminino
-            </span>
-          </div>
-        </div>
-        <button>Enviar Formulário</button>
-      </main>
-    </div>
-  );
+    )
 }
 
-export default App;
+export default App
